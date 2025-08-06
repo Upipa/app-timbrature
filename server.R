@@ -18,6 +18,7 @@ server <- function(input, output, session) {
     outputOptions(output, "ruolo", suspendWhenHidden = FALSE)
 
     updateSelectInput(session, "dipendente", selected = dipendente_loggato)
+    debug(log, str_glue("Fatto l'update del select input con id 'dipendente' aggiornando la selezione a {dipendente_loggato}"))
 
     output$timbrature_table <- renderDT(
         {
@@ -37,6 +38,11 @@ server <- function(input, output, session) {
             if(nrow_before != nrow_after) {
                 warn(log, "Numero di record inatteso nella join tra timbrature e utenti")
             }
+
+            debug(log, str_glue("Filtri globali:
+                display_name == {input$dipendente},
+                year(clock_in_event_date_time) == {input$anno},
+                 month(clock_in_event_date_time) == {mese_numerico}"))
 
             joined_data |>
                 filter(

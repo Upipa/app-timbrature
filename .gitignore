@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Rprofile
+App timbrature.Rproj
+deploy.R
+renv
+rsconnect

@@ -1,4 +1,7 @@
 server <- function(input, output, session) {
+
+    info(log, "Applicazione avviata")
+
     user <- if (config::is_active("shinyapps")) {
         session$user
     } else {

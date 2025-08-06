@@ -16,8 +16,11 @@ source("R/db_timbrature_pool.R")
 Sys.setlocale(category = "LC_ALL", locale = "it_IT.UTF-8")
 
 log <- logger(config::get("log_level"))
+info(log, str_glue("Log level impostato su {config::get('log_level')}"))
 
+info(log, "Tentativo di connessione al database")
 pool <- db_timbrature_pool()
+info(log, "Connessione avvenuta con successo")
 
 dipendente_choices <- tbl(pool, "utenti") |>
     arrange(display_name) |>
@@ -53,3 +56,7 @@ mese_choices <- ordered(
         "dic"
     )
 )
+
+onStop(function() {
+  info(log, "Applicazione terminata")
+})

@@ -9,10 +9,13 @@ library(hms)
 library(stringr)
 library(dplyr)
 library(dbplyr)
+library(log4r)
 
 source("R/db_timbrature_pool.R")
 
 Sys.setlocale(category = "LC_ALL", locale = "it_IT.UTF-8")
+
+log <- logger(config::get("log_level"))
 
 pool <- db_timbrature_pool()
 

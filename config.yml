@@ -3,6 +3,8 @@ default:
   password: kC4r411TIxZ~
   user: ivan.marino@upipa.tn.it
   driver: ODBC Driver 18 for SQL Server
+  log_level: DEBUG
 
 shinyapps:
   driver: SQLServer
+  log_level: INFO

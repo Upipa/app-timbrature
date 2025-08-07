@@ -1,5 +1,4 @@
 server <- function(input, output, session) {
-
     info(log, "Applicazione avviata")
 
     user <- if (config::is_active("shinyapps")) {
@@ -21,31 +20,61 @@ server <- function(input, output, session) {
     outputOptions(output, "ruolo", suspendWhenHidden = FALSE)
 
     updateSelectInput(session, "dipendente", selected = dipendente_loggato)
-    debug(log, str_glue("Fatto l'update del select input con id 'dipendente' aggiornando la selezione a {dipendente_loggato}"))
+    debug(
+        log,
+        str_glue(
+            "Fatto l'update del select input con id 'dipendente' aggiornando la selezione a {dipendente_loggato}"
+        )
+    )
 
-    output$timbrature_table <- renderDT(
-        {
+    timbrature_data <- reactivePoll(
+        19000,
+        session,
+        checkFunc = function() {
             mese_numerico <- which(mese_choices == input$mese)
 
-            nrow_before <- tbl(pool, "timbrature") |> 
-                count() |> 
+            tbl(pool, "timbrature") |>
+                left_join(tbl(pool, "utenti"), join_by(user_id)) |>
+                filter(
+                    display_name == input$dipendente,
+                    year(clock_in_event_date_time) == input$anno,
+                    month(clock_in_event_date_time) == mese_numerico
+                ) |>
+                summarise(
+                    last_modified_date_time = max(last_modified_date_time)
+                ) |>
+                collect()
+        },
+        valueFunc = function() {
+            mese_numerico <- which(mese_choices == input$mese)
+
+            nrow_before <- tbl(pool, "timbrature") |>
+                count() |>
                 pull(n)
 
             joined_data <- tbl(pool, "timbrature") |>
                 left_join(tbl(pool, "utenti"), join_by(user_id))
 
-            nrow_after <- joined_data |> 
-                count() |> 
+            nrow_after <- joined_data |>
+                count() |>
                 pull(n)
 
-            if(nrow_before != nrow_after) {
-                warn(log, "Numero di record inatteso nella join tra timbrature e utenti")
+            if (nrow_before != nrow_after) {
+                warn(
+                    log,
+                    "Numero di record inatteso nella join tra timbrature e utenti"
+                )
             }
 
-            debug(log, str_glue("Filtri globali:
+            debug(
+                log,
+                str_glue(
+                    "Filtri globali:
                 display_name == {input$dipendente},
                 year(clock_in_event_date_time) == {input$anno},
-                 month(clock_in_event_date_time) == {mese_numerico}"))
+                 month(clock_in_event_date_time) == {mese_numerico}"
+                )
+            )
 
             joined_data |>
                 filter(
@@ -72,6 +101,12 @@ server <- function(input, output, session) {
                     Entrata,
                     Uscita
                 )
+        }
+    )
+
+    output$timbrature_table <- renderDT(
+        {
+            timbrature_data()
         },
         rownames = FALSE,
         fillContainer = TRUE

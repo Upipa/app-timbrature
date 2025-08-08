@@ -109,6 +109,7 @@ server <- function(input, output, session) {
             timbrature_data()
         },
         rownames = FALSE,
-        fillContainer = TRUE
+        fillContainer = TRUE,
+        selection = "single"
     )
 }

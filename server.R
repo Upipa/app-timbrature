@@ -82,11 +82,13 @@ server <- function(input, output, session) {
                     year(clock_in_event_date_time) == input$anno,
                     month(clock_in_event_date_time) == mese_numerico
                 ) |>
-                mutate(
-                    Giorno = day(clock_in_event_date_time)
-                ) |>
                 collect() |>
                 mutate(
+                    Giorno = str_c(
+                        wday(clock_in_event_date_time, label = TRUE),
+                        " ",
+                        day(clock_in_event_date_time)
+                    ),
                     across(where(is.POSIXct), ~ with_tz(., "Europe/Rome")),
                     Entrata = as_hms(clock_in_event_date_time) |>
                         parse_hm() |>
@@ -95,21 +97,58 @@ server <- function(input, output, session) {
                         parse_hm() |>
                         str_remove(":00$")
                 ) |>
-                arrange(clock_in_event_date_time) |>
-                select(
-                    Giorno,
-                    Entrata,
-                    Uscita
-                )
+                arrange(clock_in_event_date_time)
         }
     )
 
     output$timbrature_table <- renderDT(
         {
-            timbrature_data()
+            timbrature_data() |>
+                select(
+                    Giorno,
+                    Entrata,
+                    Uscita
+                )
         },
+        options = list(
+            info = FALSE,
+            ordering = FALSE,
+            paging = FALSE,
+            searching = FALSE
+        ),
         rownames = FALSE,
         fillContainer = TRUE,
         selection = "single"
+    )
+
+    output$pause_table <- renderDT(
+        {
+            timecard_id <- timbrature_data()$id[
+                input$timbrature_table_rows_selected
+            ]
+
+            req(timecard_id)
+
+            tbl(pool, "pause") |>
+                filter(id == timecard_id) |>
+                collect() |>
+                mutate(
+                    `Inizio pausa` = as_hms(breaks_start_date_time) |>
+                        parse_hm() |>
+                        str_remove(":00$"),
+                    `Fine pausa` = as_hms(breaks_end_date_time) |>
+                        parse_hm() |>
+                        str_remove(":00$")
+                ) |>
+                select(`Inizio pausa`, `Fine pausa`)
+        },
+        options = list(
+            info = FALSE,
+            ordering = FALSE,
+            paging = FALSE,
+            searching = FALSE
+        ),
+        rownames = FALSE,
+        fillContainer = TRUE
     )
 }

@@ -28,7 +28,7 @@ server <- function(input, output, session) {
     )
 
     timbrature_data <- reactivePoll(
-        19000,
+        27000,
         session,
         checkFunc = function() {
             mese_numerico <- which(mese_choices == input$mese)

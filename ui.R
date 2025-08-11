@@ -17,5 +17,9 @@ ui <- page_sidebar(
     card(
         card_header("Timbrature"),
         DTOutput("timbrature_table")
+    ),
+    card(
+        card_header("Pause"),
+        DTOutput("pause_table")
     )
 )

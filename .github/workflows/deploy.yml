@@ -38,6 +38,7 @@ jobs:
           SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
         run: |
           Rscript -e "
+            Sys.setlocale(category = "LC_ALL", locale = "it_IT.UTF-8");
             rsconnect::setAccountInfo(
               name='${SHINYAPPS_NAME}',
               token='${SHINYAPPS_TOKEN}',

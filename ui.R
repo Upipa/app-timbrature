@@ -12,6 +12,11 @@ ui <- page_sidebar(
             "Mese",
             mese_choices,
             selected = month(today(), label = TRUE)
+        ),
+        value_box(
+            "Banca ore",
+            textOutput("banca_ore"),
+            showcase = bs_icon("hourglass-split")
         )
     ),
     card(

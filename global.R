@@ -10,6 +10,8 @@ library(stringr)
 library(dplyr)
 library(dbplyr)
 library(log4r)
+library(bsicons)
+library(tidyr)
 
 source("R/db_timbrature_pool.R")
 
@@ -58,5 +60,5 @@ mese_choices <- ordered(
 )
 
 onStop(function() {
-  info(log, "Applicazione terminata")
+    info(log, "Applicazione terminata")
 })

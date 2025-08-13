@@ -19,12 +19,15 @@ ui <- page_sidebar(
             showcase = bs_icon("hourglass-split")
         )
     ),
-    card(
-        card_header("Timbrature"),
-        DTOutput("timbrature_table")
-    ),
-    card(
-        card_header("Pause"),
-        DTOutput("pause_table")
+    layout_columns(
+        col_widths = c(7, 5),
+        card(
+            card_header("Timbrature"),
+            DTOutput("timbrature_table")
+        ),
+        card(
+            card_header("Pause"),
+            DTOutput("pause_table")
+        )
     )
 )

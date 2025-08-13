@@ -12,7 +12,7 @@
 
 daily_summarise <- function(df, .display_name, date_time_var, stat_var, expr) {
   df |>
-    left_join(tbl(pool, "utenti"), join_by(user_id)) |>
+    left_join_check(tbl(pool, "utenti"), join_by(user_id)) |>
     filter(display_name == .display_name) |>
     collect() |>
     mutate(

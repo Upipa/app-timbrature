@@ -16,7 +16,7 @@ banca_ore <- function(.display_name) {
     )
 
   durata_pause <- tbl(pool, "timbrature") |>
-    left_join(tbl(pool, "pause"), join_by(id)) |>
+    left_join_check(tbl(pool, "pause"), join_by(id)) |>
     daily_summarise(
       .display_name,
       clock_in_event_date_time,
@@ -37,7 +37,7 @@ banca_ore <- function(.display_name) {
     )
 
   permessi <- tbl(pool, "permessi") |>
-    left_join(tbl(pool, "causali"), join_by(time_off_reason_id == id)) |>
+    left_join_check(tbl(pool, "causali"), join_by(time_off_reason_id == id)) |>
     filter(is_active, riduce_pianificazione) |>
     select(-display_name) |>
     daily_summarise(
@@ -48,9 +48,9 @@ banca_ore <- function(.display_name) {
     )
 
   timbrato |>
-    full_join(durata_pause, join_by(giorno)) |>
-    full_join(pianificato, join_by(giorno)) |>
-    full_join(permessi, join_by(giorno)) |>
+    full_join_check(durata_pause, join_by(giorno)) |>
+    full_join_check(pianificato, join_by(giorno)) |>
+    full_join_check(permessi, join_by(giorno)) |>
     mutate(
       across(-giorno, ~ coalesce(., 0)),
       lavorato = timbrato - durata_pause,

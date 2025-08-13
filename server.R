@@ -34,7 +34,7 @@ server <- function(input, output, session) {
             mese_numerico <- which(mese_choices == input$mese)
 
             tbl(pool, "timbrature") |>
-                left_join(tbl(pool, "utenti"), join_by(user_id)) |>
+                left_join_check(tbl(pool, "utenti"), join_by(user_id)) |>
                 filter(
                     display_name == input$dipendente,
                     year(clock_in_event_date_time) == input$anno,
@@ -48,24 +48,6 @@ server <- function(input, output, session) {
         valueFunc = function() {
             mese_numerico <- which(mese_choices == input$mese)
 
-            nrow_before <- tbl(pool, "timbrature") |>
-                count() |>
-                pull(n)
-
-            joined_data <- tbl(pool, "timbrature") |>
-                left_join(tbl(pool, "utenti"), join_by(user_id))
-
-            nrow_after <- joined_data |>
-                count() |>
-                pull(n)
-
-            if (nrow_before != nrow_after) {
-                warn(
-                    log,
-                    "Numero di record inatteso nella join tra timbrature e utenti"
-                )
-            }
-
             debug(
                 log,
                 str_glue(
@@ -76,7 +58,8 @@ server <- function(input, output, session) {
                 )
             )
 
-            joined_data |>
+            tbl(pool, "timbrature") |>
+                left_join_check(tbl(pool, "utenti"), join_by(user_id)) |>
                 filter(
                     display_name == input$dipendente,
                     year(clock_in_event_date_time) == input$anno,

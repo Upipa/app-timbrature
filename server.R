@@ -151,4 +151,11 @@ server <- function(input, output, session) {
         rownames = FALSE,
         fillContainer = TRUE
     )
+
+    output$banca_ore <- renderText({
+        scales::number(
+            banca_ore(input$dipendente),
+            scale_cut = scales::cut_time_scale()
+        )
+    })
 }

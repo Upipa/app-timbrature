@@ -15,8 +15,6 @@ library(tidyr)
 
 source("R/db_timbrature_pool.R")
 
-Sys.setlocale(category = "LC_ALL", locale = "it_IT.UTF-8")
-
 log <- logger(config::get("log_level"))
 info(log, str_glue("Log level impostato su {config::get('log_level')}"))
 info(log, str_glue("LC_TIME impostato su {Sys.getlocale('LC_TIME')}"))

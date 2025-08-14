@@ -34,9 +34,8 @@ server <- function(input, output, session) {
             mese_numerico <- which(mese_choices == input$mese)
 
             tbl(pool, "timbrature") |>
-                left_join_check(tbl(pool, "utenti"), join_by(user_id)) |>
+                filter_user(input$dipendente) |>
                 filter(
-                    display_name == input$dipendente,
                     year(clock_in_event_date_time) == input$anno,
                     month(clock_in_event_date_time) == mese_numerico
                 ) |>
@@ -59,9 +58,8 @@ server <- function(input, output, session) {
             )
 
             tbl(pool, "timbrature") |>
-                left_join_check(tbl(pool, "utenti"), join_by(user_id)) |>
+                filter_user(input$dipendente) |>
                 filter(
-                    display_name == input$dipendente,
                     year(clock_in_event_date_time) == input$anno,
                     month(clock_in_event_date_time) == mese_numerico
                 ) |>

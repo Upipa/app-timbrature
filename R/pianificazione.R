@@ -98,7 +98,7 @@ pianificazione <- function(.anno, .mese, .display_name) {
     tab_style_body(
       list(
         cell_fill(bs_get_variables(bs_theme(), "primary")),
-        cell_text("white")
+        cell_text(bs_get_contrast(bs_theme(), "primary"))
       ),
       rows = 1,
       fn = \(x) !is.na(x)
@@ -106,7 +106,7 @@ pianificazione <- function(.anno, .mese, .display_name) {
     tab_style_body(
       list(
         cell_fill(bs_get_variables(bs_theme(), "secondary")),
-        cell_text("#d6d6d6")
+        cell_text(bs_get_contrast(bs_theme(), "secondary"))
       ),
       rows = causale != "Pianificato",
       fn = \(x) !is.na(x)

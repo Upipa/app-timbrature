@@ -12,6 +12,8 @@ library(dbplyr)
 library(log4r)
 library(bsicons)
 library(tidyr)
+library(purrr)
+library(gt)
 
 source("R/db_timbrature_pool.R")
 

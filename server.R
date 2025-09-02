@@ -139,4 +139,8 @@ server <- function(input, output, session) {
             scale_cut = scales::cut_time_scale()
         )
     })
+
+    output$random_id <- render_gt({
+        pianificazione(input$anno, input$mese, input$dipendente)
+    })
 }

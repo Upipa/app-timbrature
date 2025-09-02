@@ -9,6 +9,10 @@
 
 filter_user <- function(df, .display_name) {
   df |>
-    left_join_check(tbl(pool, "utenti"), join_by(user_id)) |>
+    left_join_check(
+      tbl(pool, "utenti"),
+      join_by(user_id),
+      suffix = c("", ".y")
+    ) |>
     filter(display_name == .display_name)
 }

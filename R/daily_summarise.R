@@ -1,9 +1,8 @@
 #' Riepilogo giornaliero
 #'
-#' Helper function per raggruppare un data frame per giorno e calcolare una statistica riassuntiva per un dato dipendente.
+#' Helper function per raggruppare un data frame per giorno e calcolare una statistica riassuntiva.
 #'
 #' @param df oggetto tbl su cui eseguire il raggruppamento
-#' @param .display_name nome cognome del dipendente
 #' @param date_time_var variabile datetime da cui estrarre il giorno
 #' @param stat_var nome assegnato alla statistica nel riepilogo
 #' @param expr espressione utilizzata per valutare la statistica
@@ -13,14 +12,12 @@
 
 daily_summarise <- function(
   df,
-  .display_name,
   date_time_var,
   stat_var,
   expr,
   until_today = TRUE
 ) {
   df |>
-    filter_user(.display_name) |>
     collect() |>
     mutate(
       giorno = date({{ date_time_var }}),

@@ -29,5 +29,10 @@ ui <- page_sidebar(
             card_header("Pause"),
             DTOutput("pause_table")
         )
+    ),
+    card(
+        card_header("Pianificazione"),
+        gt_output("random_id"),
+        full_screen = TRUE
     )
 )

@@ -143,4 +143,12 @@ server <- function(input, output, session) {
     output$random_id <- render_gt({
         pianificazione(input$anno, input$mese, input$dipendente)
     })
+
+    output$percorsi <- renderDT(
+        {
+            tbl(pool, "percorsi") |>
+                collect()
+        },
+        filter = "top"
+    )
 }

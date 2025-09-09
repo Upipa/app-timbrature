@@ -1,4 +1,4 @@
-ui <- page_sidebar(
+ui <- page_navbar(
     title = "Timbrature 2.0",
     sidebar = sidebar(
         title = "Filtri globali",
@@ -19,20 +19,31 @@ ui <- page_sidebar(
             showcase = bs_icon("hourglass-split")
         )
     ),
-    layout_columns(
-        col_widths = c(7, 5),
-        card(
-            card_header("Timbrature"),
-            DTOutput("timbrature_table")
+    nav_spacer(),
+    nav_panel(
+        "Turni",
+        layout_columns(
+            col_widths = c(7, 5),
+            card(
+                card_header("Timbrature"),
+                DTOutput("timbrature_table")
+            ),
+            card(
+                card_header("Pause"),
+                DTOutput("pause_table")
+            )
         ),
         card(
-            card_header("Pause"),
-            DTOutput("pause_table")
+            card_header("Pianificazione"),
+            gt_output("random_id"),
+            full_screen = TRUE
         )
     ),
-    card(
-        card_header("Pianificazione"),
-        gt_output("random_id"),
-        full_screen = TRUE
+    nav_panel(
+        "Trasferte",
+        card(
+            card_header("Percorsi"),
+            DTOutput("percorsi")
+        )
     )
 )

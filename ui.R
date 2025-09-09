@@ -20,25 +20,7 @@ ui <- page_navbar(
         )
     ),
     nav_spacer(),
-    nav_panel(
-        "Turni",
-        layout_columns(
-            col_widths = c(7, 5),
-            card(
-                card_header("Timbrature"),
-                DTOutput("timbrature_table")
-            ),
-            card(
-                card_header("Pause"),
-                DTOutput("pause_table")
-            )
-        ),
-        card(
-            card_header("Pianificazione"),
-            gt_output("random_id"),
-            full_screen = TRUE
-        )
-    ),
+    turniPanelUI("turni_panel"),
     nav_panel(
         "Trasferte",
         card(

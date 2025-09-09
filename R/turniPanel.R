@@ -33,11 +33,11 @@ turniPanelUI <- function(id) {
 #' Si occupa della logica server di filtraggio dei dati in base ai filtri selezionati dalla sidebar
 #'
 #' @param id id character del pannello turni da gestire
-#' @param .dipendente nome cognome del dipendente su cui filtrare la visuale
-#' @param .anno anno numerico su cui filtrare la visuale
-#' @param .mese mese character abbreviato su cui filtrare i dati
+#' @param dipendente() nome cognome del dipendente su cui filtrare la visuale
+#' @param anno() anno numerico su cui filtrare la visuale
+#' @param mese() mese character abbreviato su cui filtrare i dati
 
-turniPanelServer <- function(id, .dipendente, .anno, .mese) {
+turniPanelServer <- function(id, dipendente, anno, mese) {
   moduleServer(
     id,
     function(input, output, session) {
@@ -45,12 +45,12 @@ turniPanelServer <- function(id, .dipendente, .anno, .mese) {
         27000,
         session,
         checkFunc = function() {
-          mese_numerico <- which(mese_choices == .mese)
+          mese_numerico <- which(mese_choices == mese())
 
           tbl(pool, "timbrature") |>
-            filter_user(.dipendente) |>
+            filter_user(dipendente()) |>
             filter(
-              year(clock_in_event_date_time) == .anno,
+              year(clock_in_event_date_time) == !!anno(),
               month(clock_in_event_date_time) == mese_numerico
             ) |>
             summarise(
@@ -59,22 +59,22 @@ turniPanelServer <- function(id, .dipendente, .anno, .mese) {
             collect()
         },
         valueFunc = function() {
-          mese_numerico <- which(mese_choices == .mese)
+          mese_numerico <- which(mese_choices == mese())
 
           debug(
             log,
             str_glue(
               "Filtri globali:
-                display_name == {.dipendente},
-                year(clock_in_event_date_time) == {.anno},
+                display_name == {dipendente()},
+                year(clock_in_event_date_time) == {anno()},
                  month(clock_in_event_date_time) == {mese_numerico}"
             )
           )
 
           tbl(pool, "timbrature") |>
-            filter_user(.dipendente) |>
+            filter_user(dipendente()) |>
             filter(
-              year(clock_in_event_date_time) == .anno,
+              year(clock_in_event_date_time) == !!anno(),
               month(clock_in_event_date_time) == mese_numerico
             ) |>
             collect() |>
@@ -148,7 +148,7 @@ turniPanelServer <- function(id, .dipendente, .anno, .mese) {
       )
 
       output$pianificazione <- render_gt({
-        pianificazione(.anno, .mese, .dipendente)
+        pianificazione(anno(), mese(), dipendente())
       })
     }
   )

@@ -34,7 +34,12 @@ server <- function(input, output, session) {
         )
     })
 
-    turniPanelServer("turni_panel", input$dipendente, input$anno, input$mese)
+    turniPanelServer(
+        "turni_panel",
+        reactive(input$dipendente),
+        reactive(input$anno),
+        reactive(input$mese)
+    )
 
     output$percorsi <- renderDT(
         {

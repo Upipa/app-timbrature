@@ -2,6 +2,16 @@ library(shiny)
 
 ui <- page_navbar(
     title = "Timbrature 2.0",
+    tags$head(
+        tags$link(
+            href = "font-awesome-6.5.2/css/all.min.css",
+            rel = "stylesheet"
+        ),
+        tags$link(
+            href = "font-awesome-6.5.2/css/v4-shims.min.css",
+            rel = "stylesheet"
+        )
+    ),
     sidebar = sidebar(
         title = "Filtri globali",
         conditionalPanel(

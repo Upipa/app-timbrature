@@ -41,11 +41,7 @@ server <- function(input, output, session) {
         reactive(input$mese)
     )
 
-    output$percorsi <- renderDT(
-        {
-            tbl(pool, "percorsi") |>
-                collect()
-        },
-        filter = "top"
+    trasfertePanelServer(
+        "trasferte_panel"
     )
 }

@@ -1,3 +1,5 @@
+library(shiny)
+
 ui <- page_navbar(
     title = "Timbrature 2.0",
     sidebar = sidebar(
@@ -21,11 +23,5 @@ ui <- page_navbar(
     ),
     nav_spacer(),
     turniPanelUI("turni_panel"),
-    nav_panel(
-        "Trasferte",
-        card(
-            card_header("Percorsi"),
-            DTOutput("percorsi")
-        )
-    )
+    trasfertePanelUI("trasferte_panel")
 )

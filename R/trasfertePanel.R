@@ -24,7 +24,8 @@ trasfertePanelUI <- function(id) {
     ",
       ns(""),
       ns("aggiungi_trasferta_")
-    )))
+    ))),
+    tags$span(style = "display:none;", icon("plus")) # Modo brutto per assicurarsi che venga caricato il necessario per font awesome allo stesso modo di come farebbe normalmente shiny
   )
 }
 
@@ -32,18 +33,80 @@ trasfertePanelServer <- function(id) {
   moduleServer(
     id,
     function(input, output, session) {
-      observeEvent(input$aggiungi_trasferta_click, {
-        showNotification(paste0(
-          "Hai cliccato il bottone con id: ",
-          input$aggiungi_trasferta_click
-        ))
-        # qui parsare l'id oppure rimuovere il prefisso con sub(ns(""), "", input$aggiungi_trasferta_click)
+      ns <- session$ns
+
+      observe({
+        showModal(
+          modalDialog(
+            selectInput(
+              ns("moltiplicatore_t"),
+              "Quante volte devo aggiungere il tempo di viaggio al tuo tempo lavorato?",
+              choices = c(
+                2:0
+              )
+            ),
+            selectInput(
+              ns("moltiplicatore_km"),
+              "Quale tratta ti deve essere rimborsata?",
+              choices = c(
+                "Andata e ritorno" = 2,
+                "Solo uno dei sensi" = 1,
+                "Nessuna (es. passaggio da un'altra persona)" = 0
+              )
+            ),
+            layout_column_wrap(
+              value_box(
+                "Tempo lavoro aggiunto",
+                textOutput(ns("tempo_aggiunto")),
+                showcase = bs_icon("clock")
+              ),
+              value_box(
+                "Rimborso chilometrico aggiuntivo",
+                textOutput(ns("euro_aggiunti")),
+                showcase = bs_icon("currency-euro")
+              )
+            ),
+            footer = actionButton("aggiungi_trasferta", "Aggiungi trasferta"),
+            easyClose = TRUE
+          )
+        )
+      }) |>
+        bindEvent(input$aggiungi_trasferta_click)
+
+      output$tempo_aggiunto <- renderText({
+        .id <- input$aggiungi_trasferta_click |>
+          str_extract("\\d+$") |>
+          as.numeric()
+
+        tempo <- tbl(pool, "percorsi") |>
+          filter(id == .id) |>
+          pull(tempo)
+
+        vec_fmt_duration(
+          tempo * as.numeric(input$moltiplicatore_t),
+          input_units = "hours",
+          output_units = c("hours", "minutes"),
+          locale = "it"
+        )
+      })
+
+      output$euro_aggiunti <- renderText({
+        .id <- input$aggiungi_trasferta_click |>
+          str_extract("\\d+$") |>
+          as.numeric()
+
+        distanza <- tbl(pool, "percorsi") |>
+          filter(id == .id) |>
+          pull(distanza)
+
+        vec_fmt_currency(
+          distanza * 0.5 * as.numeric(input$moltiplicatore_km),
+          locale = "it"
+        )
       })
 
       output$percorsi <- render_gt(
         {
-          ns <- session$ns
-
           tbl(pool, "percorsi") |>
             collect() |>
             mutate(
@@ -63,7 +126,8 @@ trasfertePanelServer <- function(id) {
               ente_di_arrivo = "Ente arrivo",
               indirizzo_di_arrivo = "Indirizzo arrivo",
               distanza = "Distanza",
-              tempo = "Tempo di viaggio"
+              tempo = "Tempo di viaggio",
+              button = ""
             ) |>
             fmt_number(
               distanza,

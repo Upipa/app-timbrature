@@ -45,13 +45,11 @@ turniPanelServer <- function(id, dipendente, anno, mese) {
         27000,
         session,
         checkFunc = function() {
-          mese_numerico <- which(mese_choices == mese())
-
           tbl(pool, "timbrature") |>
             filter_user(dipendente()) |>
             filter(
               year(clock_in_event_date_time) == !!anno(),
-              month(clock_in_event_date_time) == mese_numerico
+              month(clock_in_event_date_time) == !!mese_numerico(mese())
             ) |>
             summarise(
               last_modified_date_time = max(last_modified_date_time)
@@ -59,15 +57,13 @@ turniPanelServer <- function(id, dipendente, anno, mese) {
             collect()
         },
         valueFunc = function() {
-          mese_numerico <- which(mese_choices == mese())
-
           debug(
             log,
             str_glue(
               "Filtri globali:
                 display_name == {dipendente()},
                 year(clock_in_event_date_time) == {anno()},
-                 month(clock_in_event_date_time) == {mese_numerico}"
+                 month(clock_in_event_date_time) == {mese_numerico(mese())}"
             )
           )
 
@@ -75,7 +71,7 @@ turniPanelServer <- function(id, dipendente, anno, mese) {
             filter_user(dipendente()) |>
             filter(
               year(clock_in_event_date_time) == !!anno(),
-              month(clock_in_event_date_time) == mese_numerico
+              month(clock_in_event_date_time) == !!mese_numerico(mese())
             ) |>
             collect() |>
             mutate(

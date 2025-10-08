@@ -7,6 +7,11 @@ trasfertePanelUI <- function(id) {
       card_header("Percorsi"),
       gt_output(ns("percorsi"))
     ),
+    card(
+      card_header("Trasferte del mese"),
+      gt_output(ns("trasferte_mese")),
+      min_height = "200px"
+    ),
     tags$script(HTML(sprintf(
       "
       (function(){
@@ -29,7 +34,7 @@ trasfertePanelUI <- function(id) {
   )
 }
 
-trasfertePanelServer <- function(id) {
+trasfertePanelServer <- function(id, dipendente, anno, mese) {
   moduleServer(
     id,
     function(input, output, session) {
@@ -150,6 +155,44 @@ trasfertePanelServer <- function(id) {
             )
         }
       )
+
+      output$trasferte_mese <- render_gt({
+        tbl(pool, "trasferte") |>
+          filter_user(dipendente()) |>
+          filter(
+            year(data) == !!anno(),
+            month(data) == !!mese_numerico(mese())
+          ) |>
+          mutate(
+            rimborso = 0.5 * distanza * moltiplicatore_km,
+            tempo_lavoro = tempo * moltiplicatore_t
+          ) |>
+          collect() |>
+          gt() |>
+          cols_hide(c(
+            id,
+            user_id,
+            moltiplicatore_t,
+            moltiplicatore_km,
+            distanza,
+            tempo,
+            display_name,
+            email,
+            ruolo
+          )) |>
+          cols_label(
+            data = "Giorno",
+            localita_di_partenza = "Località partenza",
+            ente_di_partenza = "Ente partenza",
+            indirizzo_di_partenza = "Indirizzo partenza",
+            localita_di_arrivo = "Località arrivo",
+            ente_di_arrivo = "Ente arrivo",
+            indirizzo_di_arrivo = "Indirizzo arrivo",
+            rimborso = "Rimborso",
+            tempo_lavoro = "Tempo lavoro aggiunto",
+            note = "Note"
+          )
+      })
 
       output$titolo_rimborso <- renderText({
         localita_urbane <- tbl(pool, "localita_urbane") |>

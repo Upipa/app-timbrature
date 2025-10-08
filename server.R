@@ -38,6 +38,9 @@ server <- function(input, output, session) {
     )
 
     trasfertePanelServer(
-        "trasferte_panel"
+        "trasferte_panel",
+        reactive(input$dipendente),
+        reactive(input$anno),
+        reactive(input$mese)
     )
 }

@@ -60,6 +60,10 @@ trasfertePanelServer <- function(id) {
                 "Nessuna (es. passaggio da un'altra persona)" = 0
               )
             ),
+            textAreaInput(
+              ns("note_trasferta"),
+              "Note aggiuntive (facoltativo)"
+            ),
             layout_column_wrap(
               value_box(
                 "Tempo lavoro aggiunto",

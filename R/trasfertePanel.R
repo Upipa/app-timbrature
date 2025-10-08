@@ -35,6 +35,12 @@ trasfertePanelServer <- function(id) {
     function(input, output, session) {
       ns <- session$ns
 
+      id_percorso <- reactive({
+        input$aggiungi_trasferta_click |>
+          str_extract("\\d+$") |>
+          as.numeric()
+      })
+
       observe({
         showModal(
           modalDialog(
@@ -61,7 +67,7 @@ trasfertePanelServer <- function(id) {
                 showcase = bs_icon("clock")
               ),
               value_box(
-                "Rimborso chilometrico aggiuntivo",
+                textOutput(ns("titolo_rimborso")),
                 textOutput(ns("euro_aggiunti")),
                 showcase = bs_icon("currency-euro")
               )
@@ -74,12 +80,8 @@ trasfertePanelServer <- function(id) {
         bindEvent(input$aggiungi_trasferta_click)
 
       output$tempo_aggiunto <- renderText({
-        .id <- input$aggiungi_trasferta_click |>
-          str_extract("\\d+$") |>
-          as.numeric()
-
         tempo <- tbl(pool, "percorsi") |>
-          filter(id == .id) |>
+          filter(id == !!id_percorso()) |>
           pull(tempo)
 
         vec_fmt_duration(
@@ -91,12 +93,8 @@ trasfertePanelServer <- function(id) {
       })
 
       output$euro_aggiunti <- renderText({
-        .id <- input$aggiungi_trasferta_click |>
-          str_extract("\\d+$") |>
-          as.numeric()
-
         distanza <- tbl(pool, "percorsi") |>
-          filter(id == .id) |>
+          filter(id == !!id_percorso()) |>
           pull(distanza)
 
         vec_fmt_currency(
@@ -146,6 +144,27 @@ trasfertePanelServer <- function(id) {
             )
         }
       )
+
+      output$titolo_rimborso <- renderText({
+        localita_urbane <- tbl(pool, "localita_urbane") |>
+          pull(localita)
+
+        trasferta_urbana <- tbl(pool, "percorsi") |>
+          filter(id == !!id_percorso()) |>
+          collect() |>
+          summarise(
+            trasferta_urbana = str_to_lower(localita_di_partenza) %in%
+              localita_urbane &
+              str_to_lower(localita_di_arrivo) %in% localita_urbane
+          ) |>
+          pull(trasferta_urbana)
+
+        if (trasferta_urbana) {
+          "Premio aggiunto a fine anno per trasferte urbane"
+        } else {
+          "Rimborso chilometrico aggiuntivo"
+        }
+      })
     }
   )
 }

@@ -116,6 +116,8 @@ trasfertePanelServer <- function(id) {
             ) |>
             gt() |>
             cols_hide(id) |>
+            cols_move(ente_di_partenza, localita_di_partenza) |>
+            cols_move(ente_di_arrivo, localita_di_arrivo) |>
             cols_label(
               localita_di_partenza = "Località partenza",
               ente_di_partenza = "Ente partenza",

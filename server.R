@@ -7,23 +7,19 @@ server <- function(input, output, session) {
         config::get("user")
     }
 
-    dipendente_loggato <- tbl(pool, "utenti") |>
+    user <- tbl(pool, "utenti") |>
         filter(email == user) |>
-        pull(display_name)
+        collect()
 
-    output$ruolo <- reactive({
-        tbl(pool, "utenti") |>
-            filter(email == user) |>
-            pull(ruolo)
-    })
-
+    output$ruolo <- reactive(user$ruolo)
     outputOptions(output, "ruolo", suspendWhenHidden = FALSE)
-    updateSelectInput(session, "dipendente", selected = dipendente_loggato)
+
+    updateSelectInput(session, "dipendente", selected = user$display_name)
 
     debug(
         log,
         str_glue(
-            "Fatto l'update del select input con id 'dipendente' aggiornando la selezione a {dipendente_loggato}"
+            "Fatto l'update del select input con id 'dipendente' aggiornando la selezione a {user$display_name}"
         )
     )
 

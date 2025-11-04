@@ -1,3 +1,11 @@
+#' Estrae la pianificazione mensile di un dipendente
+#'
+#' @param .anno anno numerico di cui estrarre la pianificazione
+#' @param .mese label abbreviato del mese di cui estrarre la pianificazione
+#' @param .display_name nome del dipendente di cui estrarre la pianificazione
+#'
+#' @return tabella gt adatta alla visualizzazione nell'applicazione
+
 pianificazione <- function(.anno, .mese, .display_name) {
   mese_numerico <- which(mese_choices == .mese)
   giorni_nel_mese <- 1:days_in_month(ymd(str_glue("{.anno} {.mese} 1")))

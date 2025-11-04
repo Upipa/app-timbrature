@@ -27,10 +27,6 @@ jobs:
       - name: Restore packages
         uses: r-lib/actions/setup-renv@v2
 
-      - name: Install R packages
-        run: |
-          Rscript -e 'install.packages("rsconnect", repos = "https://packagemanager.posit.co/cran/__linux__/jammy/latest")'
-
       - name: Install Italian locale
         run: |
           sudo apt-get install -y locales

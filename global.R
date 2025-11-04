@@ -14,8 +14,6 @@ library(tidyr)
 library(purrr)
 library(gt)
 
-Sys.setlocale(category = "LC_ALL", locale = "it_IT.UTF-8")
-
 source("R/db_timbrature_pool.R")
 
 log <- logger(config::get("log_level"))

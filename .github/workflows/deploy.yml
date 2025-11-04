@@ -45,6 +45,6 @@ jobs:
               token='${SHINYAPPS_TOKEN}',
               secret='${SHINYAPPS_SECRET}'
             );
-            options(rsconnect.locale = "it_IT.UTF-8");
+            options(rsconnect.locale = 'it_IT.UTF-8');
             rsconnect::deployApp(forceUpdate = TRUE)
           "

@@ -1,4 +1,6 @@
-ui <- page_sidebar(
+library(shiny)
+
+ui <- page_navbar(
     title = "Timbrature 2.0",
     sidebar = sidebar(
         title = "Filtri globali",
@@ -19,15 +21,7 @@ ui <- page_sidebar(
             showcase = bs_icon("hourglass-split")
         )
     ),
-    layout_columns(
-        col_widths = c(7, 5),
-        card(
-            card_header("Timbrature"),
-            DTOutput("timbrature_table")
-        ),
-        card(
-            card_header("Pause"),
-            DTOutput("pause_table")
-        )
-    )
+    nav_spacer(),
+    turniPanelUI("turni_panel"),
+    trasfertePanelUI("trasferte_panel")
 )

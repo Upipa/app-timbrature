@@ -242,11 +242,14 @@ trasfertePanelServer <- function(id, dipendente, anno, mese) {
           rimborso = 0.5 * distanza * moltiplicatore_km,
           tempo_lavoro = tempo * moltiplicatore_t
         ) |>
-        collect()
-
-      # se vuoi, puoi usare il risultato del poll per sostituire/integrare trasferte_tbl:
-      # poll_data <- trasferte_poll()
-      # ... eventualmente unisci o preferisci poll_data se più aggiornata ...
+        collect() |>
+        mutate(
+          data = str_c(
+            wday(data, label = TRUE),
+            " ",
+            day(data)
+          )
+        )
 
       trasferte_tbl |>
         gt() |>
@@ -272,6 +275,13 @@ trasfertePanelServer <- function(id, dipendente, anno, mese) {
           rimborso = "Rimborso",
           tempo_lavoro = "Tempo lavoro aggiunto",
           note = "Note"
+        ) |>
+        sub_missing() |>
+        fmt_currency(rimborso, locale = "it") |>
+        fmt_duration(
+          tempo_lavoro,
+          input_units = "hours",
+          output_units = c("hours", "minutes")
         )
     })
   })

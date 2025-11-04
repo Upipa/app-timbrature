@@ -145,6 +145,12 @@ turniPanelServer <- function(id, dipendente, anno, mese) {
       )
 
       output$pianificazione <- render_gt({
+        debug(
+          log,
+          str_glue(
+            "Estraggo la pianificazione di {dipendente()} per {mese()} {anno()}"
+          )
+        )
         pianificazione(anno(), mese(), dipendente())
       })
     }

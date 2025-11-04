@@ -18,7 +18,7 @@ source("R/db_timbrature_pool.R")
 
 log <- logger(config::get("log_level"))
 info(log, str_glue("Log level impostato su {config::get('log_level')}"))
-info(log, str_glue("LC_TIME impostato su {Sys.getlocale('LC_TIME')}"))
+info(log, str_glue("LC_TIME impostato su {Sys.getlocale()}"))
 
 info(log, "Tentativo di connessione al database")
 pool <- db_timbrature_pool()

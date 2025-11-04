@@ -8,3 +8,4 @@ deploy.R
 renv
 rsconnect
 percorsi.xlsx
+.vscode

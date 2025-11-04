@@ -23,7 +23,8 @@ turniPanelUI <- function(id) {
     card(
       card_header("Pianificazione"),
       gt_output(ns("pianificazione")),
-      full_screen = TRUE
+      full_screen = TRUE,
+      min_height = "33%"
     )
   )
 }

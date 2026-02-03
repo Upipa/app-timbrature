@@ -8,6 +8,7 @@
 #' @param pause_tbl tibble della tabella pause
 #' @param permessi_tbl tibble della tabella permessi
 #' @param causali_tbl tibble della tabella causali
+#' @param trasferte_tbl tibble della tabella trasferte
 #'
 #' @return numerico con numero di secondi nella banca ore
 
@@ -17,7 +18,8 @@ banca_ore <- function(
   pianificazione_tbl,
   pause_tbl,
   permessi_tbl,
-  causali_tbl
+  causali_tbl,
+  trasferte_tbl
 ) {
   anno_inizio_banca_ore <- 2026
 

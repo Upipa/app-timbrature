@@ -96,7 +96,8 @@ server <- function(input, output, session) {
                 pianificazione_poll(),
                 pause_poll(),
                 permessi_poll(),
-                causali_poll()
+                causali_poll(),
+                trasferte_poll()
             ),
             scale_cut = scales::cut_time_scale()
         )
@@ -108,6 +109,7 @@ server <- function(input, output, session) {
             pause_poll(),
             permessi_poll(),
             causali_poll(),
+            trasferte_poll(),
             ignoreInit = TRUE
         )
 

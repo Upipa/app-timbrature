@@ -13,6 +13,9 @@ library(bsicons)
 library(tidyr)
 library(purrr)
 library(gt)
+library(AzureAuth)
+library(AzureGraph)
+library(Microsoft365R)
 
 options(rsconnect.locale = "it_IT.UTF-8")
 Sys.setlocale(category = "LC_ALL", locale = "it_IT.UTF-8")
@@ -62,6 +65,25 @@ mese_choices <- ordered(
         "dic"
     )
 )
+
+tenant <- "f017cce5-ae05-41bc-ab46-d4bfe78b7c4c"
+app <- "04ce4067-073d-4801-95ce-c116ec3ed36d"
+
+redirect <- config::get("redirect")
+port <- httr::parse_url(redirect)$port
+options(shiny.port = if (is.null(port)) 3838 else as.numeric(port))
+
+pwd <- Sys.getenv("SHINY_CLIENT_SECRET")
+if (pwd == "") {
+    pwd <- NULL
+}
+
+resource <- c(
+    "https://graph.microsoft.com/.default",
+    "openid",
+    "offline_access"
+)
+
 
 onStop(function() {
     info(log, "Applicazione terminata")

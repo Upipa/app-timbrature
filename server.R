@@ -1,14 +1,27 @@
 server <- function(input, output, session) {
     info(log, "Applicazione avviata")
 
-    user <- if (config::is_active("shinyapps")) {
-        session$user
-    } else {
-        config::get("user")
+    opts <- parseQueryString(isolate(session$clientData$url_search))
+    if (is.null(opts$code)) {
+        return()
     }
 
+    token <- get_azure_token(
+        resource,
+        tenant,
+        app,
+        password = pwd,
+        auth_type = "authorization_code",
+        authorize_args = list(redirect_uri = redirect),
+        version = 2,
+        use_cache = FALSE,
+        auth_code = opts$code
+    )
+
     user <- tbl(pool, "utenti") |>
-        filter(email == user) |>
+        filter(
+            user_id == ms_graph$new(token = token)$get_user()$properties$id
+        ) |>
         collect()
 
     output$ruolo <- reactive(user$ruolo)

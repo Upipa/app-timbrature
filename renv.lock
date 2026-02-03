@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.5.1",
+    "Version": "4.5.2",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -9,6 +9,83 @@
     ]
   },
   "Packages": {
+    "AzureAuth": {
+      "Package": "AzureAuth",
+      "Version": "1.3.4",
+      "Source": "Repository",
+      "Title": "Authentication Services for Azure Active Directory",
+      "Authors@R": "c( person(\"Hong\", \"Ooi\", , \"hongooi73@gmail.com\", role = c(\"aut\", \"cre\")), person(\"Tyler\", \"Littlefield\", role=\"ctb\"), person(\"httr development team\", role=\"ctb\", comment=\"Original OAuth listener code\"), person(\"Scott\", \"Holden\", , role = \"ctb\", comment = \"Advice on AAD authentication\"), person(\"Chris\", \"Stone\", , role = \"ctb\", comment = \"Advice on AAD authentication\"), person(\"Microsoft\", role=\"cph\") )",
+      "Description": "Provides Azure Active Directory (AAD) authentication functionality for R users of Microsoft's 'Azure' cloud <https://azure.microsoft.com/en-us>. Use this package to obtain 'OAuth' 2.0 tokens for services including Azure Resource Manager, Azure Storage and others. It supports both AAD v1.0 and v2.0, as well as multiple authentication methods, including device code and resource owner grant. Tokens are cached in a user-specific directory obtained using the 'rappdirs' package. The interface is based on the 'OAuth' framework in the 'httr' package, but customised and streamlined for Azure. Part of the 'AzureR' family of packages.",
+      "URL": "https://github.com/Azure/AzureAuth https://github.com/Azure/AzureR",
+      "BugReports": "https://github.com/Azure/AzureAuth/issues",
+      "License": "MIT + file LICENSE",
+      "VignetteBuilder": "knitr",
+      "Depends": [
+        "R (>= 3.3)"
+      ],
+      "Imports": [
+        "utils",
+        "httr (>= 1.3)",
+        "openssl",
+        "jsonlite",
+        "jose",
+        "R6",
+        "rappdirs"
+      ],
+      "Suggests": [
+        "knitr",
+        "rmarkdown",
+        "testthat",
+        "httpuv",
+        "shiny",
+        "shinyjs",
+        "AzureRMR",
+        "AzureGraph"
+      ],
+      "RoxygenNote": "7.3.2",
+      "NeedsCompilation": "no",
+      "Author": "Hong Ooi [aut, cre], Tyler Littlefield [ctb], httr development team [ctb] (Original OAuth listener code), Scott Holden [ctb] (Advice on AAD authentication), Chris Stone [ctb] (Advice on AAD authentication), Microsoft [cph]",
+      "Maintainer": "Hong Ooi <hongooi73@gmail.com>",
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
+    },
+    "AzureGraph": {
+      "Package": "AzureGraph",
+      "Version": "1.3.5",
+      "Source": "Repository",
+      "Title": "Simple Interface to 'Microsoft Graph'",
+      "Authors@R": "c( person(\"Hong\", \"Ooi\", , \"hongooi73@gmail.com\", role = c(\"aut\", \"cre\")), person(\"Microsoft\", role=\"cph\") )",
+      "Description": "A simple interface to the 'Microsoft Graph' API <https://learn.microsoft.com/en-us/graph/overview>. 'Graph' is a comprehensive framework for accessing data in various online Microsoft services. This package was originally intended to provide an R interface only to the 'Azure Active Directory' part, with a view to supporting interoperability of R and 'Azure': users, groups, registered apps and service principals. However it has since been expanded into a more general tool for interacting with Graph. Part of the 'AzureR' family of packages.",
+      "URL": "https://github.com/Azure/AzureGraph https://github.com/Azure/AzureR",
+      "BugReports": "https://github.com/Azure/AzureGraph/issues",
+      "License": "MIT + file LICENSE",
+      "VignetteBuilder": "knitr",
+      "Depends": [
+        "R (>= 3.3)"
+      ],
+      "Imports": [
+        "AzureAuth (>= 1.0.1)",
+        "utils",
+        "httr (>= 1.3)",
+        "jsonlite",
+        "openssl",
+        "curl",
+        "R6"
+      ],
+      "Suggests": [
+        "AzureRMR",
+        "vctrs",
+        "knitr",
+        "rmarkdown",
+        "testthat"
+      ],
+      "RoxygenNote": "7.3.1",
+      "NeedsCompilation": "no",
+      "Author": "Hong Ooi [aut, cre], Microsoft [cph]",
+      "Maintainer": "Hong Ooi <hongooi73@gmail.com>",
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
+    },
     "DBI": {
       "Package": "DBI",
       "Version": "1.2.3",
@@ -95,6 +172,50 @@
       "Author": "Yihui Xie [aut], Joe Cheng [aut, cre], Xianying Tan [aut], JJ Allaire [ctb], Maximilian Girlich [ctb], Greg Freedman Ellis [ctb], Johannes Rauh [ctb], SpryMedia Limited [ctb, cph] (DataTables in htmlwidgets/lib), Brian Reavis [ctb, cph] (selectize.js in htmlwidgets/lib), Leon Gersen [ctb, cph] (noUiSlider in htmlwidgets/lib), Bartek Szopka [ctb, cph] (jquery.highlight.js in htmlwidgets/lib), Alex Pickering [ctb], William Holmes [ctb], Mikko Marttila [ctb], Andres Quintero [ctb], Stéphane Laurent [ctb], Posit Software, PBC [cph, fnd]",
       "Maintainer": "Joe Cheng <joe@posit.co>",
       "Repository": "CRAN"
+    },
+    "Microsoft365R": {
+      "Package": "Microsoft365R",
+      "Version": "2.4.1",
+      "Source": "Repository",
+      "Title": "Interface to the 'Microsoft 365' Suite of Cloud Services",
+      "Authors@R": "c( person(\"Hong\", \"Ooi\", , \"hongooi73@gmail.com\", role = c(\"aut\", \"cre\")), person(\"Roman\", \"Zenka\", role=\"ctb\"), person(\"Robert\", \"Ashton\", role=\"ctb\"), person(\"Philip\", \"Zheng\", role=\"ctb\"), person(\"Microsoft\", role=\"cph\") )",
+      "Description": "An interface to the 'Microsoft 365' (formerly known as 'Office 365') suite of cloud services, building on the framework supplied by the 'AzureGraph' package. Enables access from R to data stored in 'Teams', 'SharePoint Online' and 'OneDrive', including the ability to list drive folder contents, upload and download files, send messages, and retrieve data lists. Also provides a full-featured 'Outlook' email client, with the ability to send emails and manage emails and mail folders.",
+      "URL": "https://github.com/Azure/Microsoft365R https://github.com/Azure/AzureR",
+      "BugReports": "https://github.com/Azure/Microsoft365R/issues",
+      "License": "MIT + file LICENSE",
+      "VignetteBuilder": "knitr",
+      "Depends": [
+        "R (>= 3.3)"
+      ],
+      "Imports": [
+        "AzureAuth",
+        "AzureGraph (>= 1.3.1)",
+        "utils",
+        "parallel",
+        "tools",
+        "curl",
+        "httr",
+        "jsonlite",
+        "R6",
+        "vctrs",
+        "mime"
+      ],
+      "Suggests": [
+        "openssl",
+        "knitr",
+        "rmarkdown",
+        "testthat",
+        "blastula",
+        "emayili",
+        "readr",
+        "readxl"
+      ],
+      "RoxygenNote": "7.2.1",
+      "NeedsCompilation": "no",
+      "Author": "Hong Ooi [aut, cre], Roman Zenka [ctb], Robert Ashton [ctb], Philip Zheng [ctb], Microsoft [cph]",
+      "Maintainer": "Hong Ooi <hongooi73@gmail.com>",
+      "Repository": "CRAN",
+      "Encoding": "UTF-8"
     },
     "PKI": {
       "Package": "PKI",
@@ -1481,6 +1602,78 @@
       "NeedsCompilation": "yes",
       "Author": "Joe Cheng [aut], Winston Chang [aut, cre], Posit, PBC fnd [cph], Hector Corrada Bravo [ctb], Jeroen Ooms [ctb], Andrzej Krzemienski [cph] (optional.hpp), libuv project contributors [cph] (libuv library, see src/libuv/AUTHORS file), Joyent, Inc. and other Node contributors [cph] (libuv library, see src/libuv/AUTHORS file; and http-parser library, see src/http-parser/AUTHORS file), Niels Provos [cph] (libuv subcomponent: tree.h), Internet Systems Consortium, Inc. [cph] (libuv subcomponent: inet_pton and inet_ntop, contained in src/libuv/src/inet.c), Alexander Chemeris [cph] (libuv subcomponent: stdint-msvc2008.h (from msinttypes)), Google, Inc. [cph] (libuv subcomponent: pthread-fixes.c), Sony Mobile Communcations AB [cph] (libuv subcomponent: pthread-fixes.c), Berkeley Software Design Inc. [cph] (libuv subcomponent: android-ifaddrs.h, android-ifaddrs.c), Kenneth MacKay [cph] (libuv subcomponent: android-ifaddrs.h, android-ifaddrs.c), Emergya (Cloud4all, FP7/2007-2013, grant agreement no 289016) [cph] (libuv subcomponent: android-ifaddrs.h, android-ifaddrs.c), Steve Reid [aut] (SHA-1 implementation), James Brown [aut] (SHA-1 implementation), Bob Trower [aut] (base64 implementation), Alexander Peslyak [aut] (MD5 implementation), Trantor Standard Systems [cph] (base64 implementation), Igor Sysoev [cph] (http-parser)",
       "Maintainer": "Winston Chang <winston@posit.co>",
+      "Repository": "CRAN"
+    },
+    "httr": {
+      "Package": "httr",
+      "Version": "1.4.7",
+      "Source": "Repository",
+      "Title": "Tools for Working with URLs and HTTP",
+      "Authors@R": "c( person(\"Hadley\", \"Wickham\", , \"hadley@posit.co\", role = c(\"aut\", \"cre\")), person(\"Posit, PBC\", role = c(\"cph\", \"fnd\")) )",
+      "Description": "Useful tools for working with HTTP organised by HTTP verbs (GET(), POST(), etc). Configuration functions make it easy to control additional request components (authenticate(), add_headers() and so on).",
+      "License": "MIT + file LICENSE",
+      "URL": "https://httr.r-lib.org/, https://github.com/r-lib/httr",
+      "BugReports": "https://github.com/r-lib/httr/issues",
+      "Depends": [
+        "R (>= 3.5)"
+      ],
+      "Imports": [
+        "curl (>= 5.0.2)",
+        "jsonlite",
+        "mime",
+        "openssl (>= 0.8)",
+        "R6"
+      ],
+      "Suggests": [
+        "covr",
+        "httpuv",
+        "jpeg",
+        "knitr",
+        "png",
+        "readr",
+        "rmarkdown",
+        "testthat (>= 0.8.0)",
+        "xml2"
+      ],
+      "VignetteBuilder": "knitr",
+      "Config/Needs/website": "tidyverse/tidytemplate",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.2.3",
+      "NeedsCompilation": "no",
+      "Author": "Hadley Wickham [aut, cre], Posit, PBC [cph, fnd]",
+      "Maintainer": "Hadley Wickham <hadley@posit.co>",
+      "Repository": "RSPM"
+    },
+    "jose": {
+      "Package": "jose",
+      "Version": "1.2.1",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "JavaScript Object Signing and Encryption",
+      "Authors@R": "person(\"Jeroen\", \"Ooms\", role = c(\"aut\", \"cre\"),  email = \"jeroenooms@gmail.com\", comment = c(ORCID = \"0000-0002-4035-0289\"))",
+      "Description": "Read and write JSON Web Keys (JWK, rfc7517), generate and verify JSON Web Signatures (JWS, rfc7515) and encode/decode JSON Web Tokens (JWT, rfc7519) <https://datatracker.ietf.org/wg/jose/documents/>. These standards provide  modern signing and encryption formats that are natively supported by browsers via the JavaScript WebCryptoAPI <https://www.w3.org/TR/WebCryptoAPI/#jose>,  and used by services like OAuth 2.0, LetsEncrypt, and Github Apps.",
+      "License": "MIT + file LICENSE",
+      "URL": "https://r-lib.r-universe.dev/jose",
+      "BugReports": "https://github.com/r-lib/jose/issues",
+      "Depends": [
+        "openssl (>= 1.2.1)"
+      ],
+      "Imports": [
+        "jsonlite"
+      ],
+      "RoxygenNote": "7.1.2",
+      "VignetteBuilder": "knitr",
+      "Suggests": [
+        "spelling",
+        "testthat",
+        "knitr",
+        "rmarkdown"
+      ],
+      "Encoding": "UTF-8",
+      "Language": "en-US",
+      "NeedsCompilation": "no",
+      "Author": "Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>)",
+      "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
       "Repository": "CRAN"
     },
     "jquerylib": {

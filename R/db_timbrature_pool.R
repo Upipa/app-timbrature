@@ -11,8 +11,8 @@
 #' @return Una connessione DBI
 
 db_timbrature_pool <- function(
-  user = config::get("service_userid"),
-  pw = config::get("password"),
+  user = Sys.getenv("SERVICE_USERID"),
+  pw = Sys.getenv("PASSWORD"),
   ...,
   driver = config::get("driver")
 ) {

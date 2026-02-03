@@ -18,7 +18,6 @@ daily_summarise <- function(
   until_today = TRUE
 ) {
   df |>
-    collect() |>
     mutate(
       giorno = date({{ date_time_var }}),
       {{ stat_var }} := {{ expr }}

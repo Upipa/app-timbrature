@@ -31,7 +31,10 @@ info(log, "Tentativo di connessione al database")
 pool <- db_timbrature_pool()
 info(log, "Connessione avvenuta con successo")
 
-dipendente_choices <- tbl(pool, "utenti") |>
+utenti <- tbl(pool, "utenti") |>
+    collect()
+
+dipendente_choices <- utenti |>
     arrange(display_name) |>
     pull(display_name)
 
@@ -83,6 +86,8 @@ resource <- c(
     "openid",
     "offline_access"
 )
+
+refresh_time <- 56000
 
 
 onStop(function() {

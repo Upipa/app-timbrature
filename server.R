@@ -18,11 +18,10 @@ server <- function(input, output, session) {
         auth_code = opts$code
     )
 
-    user <- tbl(pool, "utenti") |>
+    user <- utenti |>
         filter(
             user_id == ms_graph$new(token = token)$get_user()$properties$id
-        ) |>
-        collect()
+        )
 
     output$ruolo <- reactive(user$ruolo)
     outputOptions(output, "ruolo", suspendWhenHidden = FALSE)
@@ -36,25 +35,100 @@ server <- function(input, output, session) {
         )
     )
 
+    timbrature_poll <- poll(pool, "timbrature", refresh_time, session)
+    pianificazione_poll <- poll(pool, "pianificazione", refresh_time, session)
+    permessi_poll <- poll(pool, "permessi", refresh_time, session)
+    causali_poll <- poll(pool, "causali", refresh_time, session)
+
+    pause_poll <- reactivePoll(
+        refresh_time,
+        session,
+        checkFunc = function() {
+            tbl(pool, "timbrature") |>
+                summarise(
+                    last_modified_date_time = max(last_modified_date_time)
+                ) |>
+                collect()
+        },
+        valueFunc = function() {
+            tbl(pool, "pause") |>
+                collect()
+        }
+    )
+
+    trasferte_poll <- reactivePoll(
+        refresh_time,
+        session,
+        checkFunc = function() {
+            tbl(pool, "trasferte") |>
+                summarise(
+                    id = max(id)
+                ) |>
+                collect()
+        },
+        valueFunc = function() {
+            tbl(pool, "trasferte") |>
+                collect()
+        }
+    )
+
+    percorsi_poll <- reactivePoll(
+        refresh_time,
+        session,
+        checkFunc = function() {
+            tbl(pool, "percorsi") |>
+                summarise(
+                    id = max(id)
+                ) |>
+                collect()
+        },
+        valueFunc = function() {
+            tbl(pool, "percorsi") |>
+                collect()
+        }
+    )
+
     output$banca_ore <- renderText({
         scales::number(
-            banca_ore(input$dipendente),
+            banca_ore(
+                input$dipendente,
+                timbrature_poll(),
+                pianificazione_poll(),
+                pause_poll(),
+                permessi_poll(),
+                causali_poll()
+            ),
             scale_cut = scales::cut_time_scale()
         )
     }) |>
-        bindEvent(input$dipendente, ignoreInit = TRUE)
+        bindEvent(
+            input$dipendente,
+            timbrature_poll(),
+            pianificazione_poll(),
+            pause_poll(),
+            permessi_poll(),
+            causali_poll(),
+            ignoreInit = TRUE
+        )
 
     turniPanelServer(
         "turni_panel",
         reactive(input$dipendente),
         reactive(input$anno),
-        reactive(input$mese)
+        reactive(input$mese),
+        timbrature_poll,
+        pianificazione_poll,
+        pause_poll,
+        permessi_poll,
+        causali_poll
     )
 
     trasfertePanelServer(
         "trasferte_panel",
         reactive(input$dipendente),
         reactive(input$anno),
-        reactive(input$mese)
+        reactive(input$mese),
+        trasferte_poll,
+        percorsi_poll
     )
 }

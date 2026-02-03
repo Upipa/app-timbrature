@@ -3,10 +3,20 @@
 #' @param .anno anno numerico di cui estrarre la pianificazione
 #' @param .mese label abbreviato del mese di cui estrarre la pianificazione
 #' @param .display_name nome del dipendente di cui estrarre la pianificazione
+#' @param pianificazione_tbl tibble della tabella pianificazione
+#' @param permessi_tbl tibble della tabella permessi
+#' @param causali_tbl tibble della tabella causali
 #'
 #' @return tabella gt adatta alla visualizzazione nell'applicazione
 
-pianificazione <- function(.anno, .mese, .display_name) {
+pianificazione <- function(
+  .anno,
+  .mese,
+  .display_name,
+  pianificazione_tbl,
+  permessi_tbl,
+  causali_tbl
+) {
   mese_numerico <- which(mese_choices == .mese)
   giorni_nel_mese <- 1:days_in_month(ymd(str_glue("{.anno} {.mese} 1")))
 
@@ -25,7 +35,7 @@ pianificazione <- function(.anno, .mese, .display_name) {
       ))
     )
 
-  pianificato <- tbl(pool, "pianificazione") |>
+  pianificato <- pianificazione_tbl |>
     filter_user(.display_name) |>
     filter(
       year(start_date_time) == .anno,
@@ -45,10 +55,9 @@ pianificazione <- function(.anno, .mese, .display_name) {
       pianificato = pianificato / 3600
     )
 
-  permessi <- tbl(pool, "permessi") |>
+  permessi <- permessi_tbl |>
     filter_user(.display_name) |>
-    left_join(tbl(pool, "causali"), join_by(time_off_reason_id == id)) |>
-    collect() |>
+    left_join(causali_tbl, join_by(time_off_reason_id == id)) |>
     mutate(
       across(start_date_time:end_date_time, ~ with_tz(., "Europe/Rome")),
       intervallo_permesso = start_date_time %--% end_date_time

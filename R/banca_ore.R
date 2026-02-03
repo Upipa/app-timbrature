@@ -3,13 +3,25 @@
 #' Funzione che dato il nome cognome di un dipendente calcola la sua banca ore.
 #'
 #' @param .display_name nome cognome del dipendente
+#' @param timbrature_tbl tibble della tabella timbrature
+#' @param pianificazione_tbl tibble della tabella pianificazione
+#' @param pause_tbl tibble della tabella pause
+#' @param permessi_tbl tibble della tabella permessi
+#' @param causali_tbl tibble della tabella causali
 #'
 #' @return numerico con numero di secondi nella banca ore
 
-banca_ore <- function(.display_name) {
+banca_ore <- function(
+  .display_name,
+  timbrature_tbl,
+  pianificazione_tbl,
+  pause_tbl,
+  permessi_tbl,
+  causali_tbl
+) {
   anno_inizio_banca_ore <- 2026
 
-  timbrato <- tbl(pool, "timbrature") |>
+  timbrato <- timbrature_tbl |>
     filter(year(clock_in_event_date_time) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>
     daily_summarise(
@@ -18,17 +30,17 @@ banca_ore <- function(.display_name) {
       as.duration(clock_out_event_date_time - clock_in_event_date_time)
     )
 
-  durata_pause <- tbl(pool, "timbrature") |>
+  durata_pause <- timbrature_tbl |>
     filter(year(clock_in_event_date_time) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>
-    left_join_check(tbl(pool, "pause"), join_by(id)) |>
+    left_join_check(pause_tbl, join_by(id)) |>
     daily_summarise(
       clock_in_event_date_time,
       durata_pause,
       as.duration(breaks_end_date_time - breaks_start_date_time)
     )
 
-  pianificato <- tbl(pool, "pianificazione") |>
+  pianificato <- pianificazione_tbl |>
     filter(year(end_date_time) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>
     daily_summarise(
@@ -41,11 +53,11 @@ banca_ore <- function(.display_name) {
         )
     )
 
-  permessi <- tbl(pool, "permessi") |>
+  permessi <- permessi_tbl |>
     filter(year(start_date_time) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>
     left_join_check(
-      tbl(pool, "causali"),
+      causali_tbl,
       join_by(time_off_reason_id == id),
       suffix = c("", ".y")
     ) |>
@@ -70,7 +82,7 @@ banca_ore <- function(.display_name) {
     summarise(banca_ore = sum(banca_ore)) |>
     pull(banca_ore)
 
-  banca_ore_base <- tbl(pool, "utenti") |>
+  banca_ore_base <- utenti |>
     filter(display_name == .display_name) |>
     pull(banca_ore_iniziale_2026)
 

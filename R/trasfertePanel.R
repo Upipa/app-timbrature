@@ -1,3 +1,8 @@
+#' Pannello dei turni
+#'
+#' Pannello per la visualizzazione delle trasferte del mese e dei percorsi
+#' @param id id character del pannello. Serve solo come riferimento per la parte server del modulo
+
 trasfertePanelUI <- function(id) {
   ns <- NS(id)
 
@@ -34,27 +39,30 @@ trasfertePanelUI <- function(id) {
   )
 }
 
-trasfertePanelServer <- function(id, dipendente, anno, mese) {
+#' Server del pannello Trasferte
+#'
+#' Si occupa della logica server di filtraggio dei dati in base ai filtri selezionati dalla sidebar
+#'
+#' @param id id character del pannello turni da gestire
+#' @param dipendente nome cognome del dipendente su cui filtrare la visuale
+#' @param anno anno numerico su cui filtrare la visuale
+#' @param mese mese character abbreviato su cui filtrare i dati
+#' @param trasferte_poll reactivePoll della tabella trasferte
+#' @param percorsi_poll reactivePoll della tabella percorsi
+
+trasfertePanelServer <- function(
+  id,
+  dipendente,
+  anno,
+  mese,
+  trasferte_poll,
+  percorsi_poll
+) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     # trigger per aggiornamento immediato dopo inserimento
     trasferte_trigger <- reactiveVal(0)
-
-    # reactivePoll per catturare cambi esterni (controllo molto veloce: max id)
-    trasferte_poll <- reactivePoll(
-      intervalMillis = 10000,
-      session = session,
-      checkFunc = function() {
-        tbl(pool, "trasferte") |>
-          summarise(max_id = max(id, na.rm = TRUE)) |>
-          pull(max_id)
-      },
-      valueFunc = function() {
-        # ritorna i dati completi se il check segnala cambiamento
-        tbl(pool, "trasferte") |> collect()
-      }
-    )
 
     id_percorso <- reactive({
       input$aggiungi_trasferta_click |>
@@ -132,14 +140,13 @@ trasfertePanelServer <- function(id, dipendente, anno, mese) {
       bindEvent(input$aggiungi_trasferta_click)
 
     observe({
-      user_id <- tbl(pool, "utenti") |>
+      user_id <- utenti |>
         filter(display_name == !!dipendente()) |>
         pull(user_id)
 
-      trasferta_da_aggiungere <- tbl(pool, "percorsi") |>
+      trasferta_da_aggiungere <- percorsi_poll() |>
         filter(id == !!id_percorso()) |>
         select(-id) |>
-        collect() |>
         mutate(
           data = input$giorno_trasferta,
           user_id = user_id,
@@ -159,7 +166,7 @@ trasfertePanelServer <- function(id, dipendente, anno, mese) {
       bindEvent(input$aggiungi_trasferta)
 
     output$tempo_aggiunto <- renderText({
-      tempo <- tbl(pool, "percorsi") |>
+      tempo <- percorsi_poll() |>
         filter(id == !!id_percorso()) |>
         pull(tempo)
 
@@ -172,7 +179,7 @@ trasfertePanelServer <- function(id, dipendente, anno, mese) {
     })
 
     output$euro_aggiunti <- renderText({
-      distanza <- tbl(pool, "percorsi") |>
+      distanza <- percorsi_poll() |>
         filter(id == !!id_percorso()) |>
         pull(distanza)
 
@@ -184,8 +191,7 @@ trasfertePanelServer <- function(id, dipendente, anno, mese) {
 
     output$percorsi <- render_gt(
       {
-        tbl(pool, "percorsi") |>
-          collect() |>
+        percorsi_poll() |>
           mutate(
             button = str_glue("aggiungi_trasferta_{id}"),
             button = ns(button),
@@ -226,13 +232,26 @@ trasfertePanelServer <- function(id, dipendente, anno, mese) {
       }
     )
 
+    trasferte_src <- reactiveVal()
+
+    observe({
+      trasferte_poll() |>
+        trasferte_src()
+    })
+
+    observe({
+      tbl(pool, "trasferte") |>
+        collect() |>
+        trasferte_src()
+    }) |>
+      bindEvent(trasferte_trigger())
+
     # render della tabella mese: dipende dal trigger (immediato) e dal poll (sincronizzazione esterna)
     output$trasferte_mese <- render_gt({
       # dipendenza per aggiornamento immediato
-      trasferte_trigger()
 
       # preferisco leggere nuovamente dal DB qui (o usare il valore del poll se lo preferisci)
-      trasferte_tbl <- tbl(pool, "trasferte") |>
+      trasferte_tbl <- trasferte_src() |>
         filter_user(dipendente()) |>
         filter(
           year(data) == !!anno(),
@@ -242,7 +261,6 @@ trasfertePanelServer <- function(id, dipendente, anno, mese) {
           rimborso = 0.5 * distanza * moltiplicatore_km,
           tempo_lavoro = tempo * moltiplicatore_t
         ) |>
-        collect() |>
         mutate(
           data = str_c(
             wday(data, label = TRUE),
@@ -259,10 +277,7 @@ trasfertePanelServer <- function(id, dipendente, anno, mese) {
           moltiplicatore_t,
           moltiplicatore_km,
           distanza,
-          tempo,
-          display_name,
-          email,
-          ruolo
+          tempo
         )) |>
         cols_label(
           data = "Giorno",

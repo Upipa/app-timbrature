@@ -8,7 +8,7 @@
 #' @return tbl_sql joinato con la tabella utenti e filtrato per l'utente in input
 
 filter_user <- function(df, .display_name) {
-  .user_id <- tbl(pool, "utenti") |>
+  .user_id <- utenti |>
     filter(display_name == .display_name) |>
     pull(user_id)
 

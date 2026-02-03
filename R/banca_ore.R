@@ -71,13 +71,23 @@ banca_ore <- function(
       as.duration(end_date_time - start_date_time)
     )
 
+  trasferte <- trasferte_tbl |>
+    filter(year(data) >= anno_inizio_banca_ore) |>
+    filter_user(.display_name) |>
+    daily_summarise(
+      data,
+      trasferte,
+      tempo * moltiplicatore_t * 3600
+    )
+
   banca_ore_accumulata <- timbrato |>
     full_join_check(durata_pause, join_by(giorno)) |>
     full_join_check(pianificato, join_by(giorno)) |>
     full_join_check(permessi, join_by(giorno)) |>
+    full_join_check(trasferte, join_by(giorno)) |>
     mutate(
       across(-giorno, ~ coalesce(., 0)),
-      lavorato = timbrato - durata_pause,
+      lavorato = timbrato - durata_pause + trasferte,
       pianificato_meno_permessi = pmax(pianificato - permessi, 0),
       banca_ore = (lavorato - pianificato_meno_permessi)
     ) |>

@@ -7,7 +7,10 @@
 #' @return numerico con numero di secondi nella banca ore
 
 banca_ore <- function(.display_name) {
+  anno_inizio_banca_ore <- 2026
+
   timbrato <- tbl(pool, "timbrature") |>
+    filter(year(clock_in_event_date_time) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>
     daily_summarise(
       clock_in_event_date_time,
@@ -16,6 +19,7 @@ banca_ore <- function(.display_name) {
     )
 
   durata_pause <- tbl(pool, "timbrature") |>
+    filter(year(clock_in_event_date_time) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>
     left_join_check(tbl(pool, "pause"), join_by(id)) |>
     daily_summarise(
@@ -25,6 +29,7 @@ banca_ore <- function(.display_name) {
     )
 
   pianificato <- tbl(pool, "pianificazione") |>
+    filter(year(end_date_time) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>
     daily_summarise(
       start_date_time,
@@ -37,6 +42,7 @@ banca_ore <- function(.display_name) {
     )
 
   permessi <- tbl(pool, "permessi") |>
+    filter(year(start_date_time) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>
     left_join_check(
       tbl(pool, "causali"),
@@ -51,7 +57,7 @@ banca_ore <- function(.display_name) {
       as.duration(end_date_time - start_date_time)
     )
 
-  timbrato |>
+  banca_ore_accumulata <- timbrato |>
     full_join_check(durata_pause, join_by(giorno)) |>
     full_join_check(pianificato, join_by(giorno)) |>
     full_join_check(permessi, join_by(giorno)) |>
@@ -59,8 +65,14 @@ banca_ore <- function(.display_name) {
       across(-giorno, ~ coalesce(., 0)),
       lavorato = timbrato - durata_pause,
       pianificato_meno_permessi = pmax(pianificato - permessi, 0),
-      banca_ore = (lavorato - pianificato)
+      banca_ore = (lavorato - pianificato_meno_permessi)
     ) |>
     summarise(banca_ore = sum(banca_ore)) |>
     pull(banca_ore)
+
+  banca_ore_base <- tbl(pool, "utenti") |>
+    filter(display_name == .display_name) |>
+    pull(banca_ore_iniziale_2026)
+
+  banca_ore_base * 3600 + banca_ore_accumulata
 }

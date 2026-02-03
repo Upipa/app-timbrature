@@ -23,7 +23,7 @@ daily_summarise <- function(
       giorno = date({{ date_time_var }}),
       {{ stat_var }} := {{ expr }}
     ) |>
-    filter(giorno <= today() | !until_today) |>
+    filter(giorno < today() | !until_today) |>
     drop_na({{ stat_var }}) |>
     group_by(giorno) |>
     summarise({{ stat_var }} := sum({{ stat_var }}))

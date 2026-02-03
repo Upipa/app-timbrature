@@ -56,7 +56,7 @@ banca_ore <- function(
     )
 
   permessi <- permessi_tbl |>
-    filter(year(start_date_time) >= anno_inizio_banca_ore) |>
+    filter(year(end_date_time) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>
     left_join_check(
       causali_tbl,

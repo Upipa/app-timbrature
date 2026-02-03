@@ -3,6 +3,6 @@ default:
   log_level: DEBUG
   redirect: http://localhost:3838
 
-shinyapps:
+connect_cloud:
   driver: SQLServer
   log_level: DEBUG

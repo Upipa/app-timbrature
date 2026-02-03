@@ -47,11 +47,6 @@ turniPanelServer <- function(id, dipendente, anno, mese) {
         session,
         checkFunc = function() {
           tbl(pool, "timbrature") |>
-            filter_user(dipendente()) |>
-            filter(
-              year(clock_in_event_date_time) == !!anno(),
-              month(clock_in_event_date_time) == !!mese_numerico(mese())
-            ) |>
             summarise(
               last_modified_date_time = max(last_modified_date_time)
             ) |>
@@ -111,7 +106,8 @@ turniPanelServer <- function(id, dipendente, anno, mese) {
         rownames = FALSE,
         fillContainer = TRUE,
         selection = "single"
-      )
+      ) |>
+        bindEvent(timbrature_data(), ignoreInit = TRUE)
 
       output$pause_table <- renderDT(
         {
@@ -152,7 +148,8 @@ turniPanelServer <- function(id, dipendente, anno, mese) {
           )
         )
         pianificazione(anno(), mese(), dipendente())
-      })
+      }) |>
+        bindEvent(anno(), mese(), dipendente(), ignoreInit = TRUE)
     }
   )
 }

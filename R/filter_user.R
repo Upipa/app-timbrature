@@ -8,11 +8,10 @@
 #' @return tbl_sql joinato con la tabella utenti e filtrato per l'utente in input
 
 filter_user <- function(df, .display_name) {
+  .user_id <- tbl(pool, "utenti") |>
+    filter(display_name == .display_name) |>
+    pull(user_id)
+
   df |>
-    left_join_check(
-      tbl(pool, "utenti"),
-      join_by(user_id),
-      suffix = c("", ".y")
-    ) |>
-    filter(display_name == .display_name)
+    filter(user_id == .user_id)
 }

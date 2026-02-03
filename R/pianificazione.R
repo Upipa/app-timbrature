@@ -57,7 +57,7 @@ pianificazione <- function(.anno, .mese, .display_name) {
 
   if (nrow(permessi) > 0) {
     permessi <- permessi |>
-      rename(causale = display_name.y) |>
+      rename(causale = display_name) |>
       mutate(
         intervallo_spezzato = map(intervallo_permesso, \(int) {
           giorni |>
@@ -99,22 +99,24 @@ pianificazione <- function(.anno, .mese, .display_name) {
     ) |>
     pivot_wider(id_cols = causale, values_from = durata, names_from = giorno)
 
+  theme <- bs_theme()
+
   pianificato_tab |>
     gt(rowname_col = "causale") |>
     fmt_duration(input_units = "hours") |>
     sub_missing(missing_text = "") |>
     tab_style_body(
       list(
-        cell_fill(bs_get_variables(bs_theme(), "primary")),
-        cell_text(bs_get_contrast(bs_theme(), "primary"))
+        cell_fill(bs_get_variables(theme, "primary")),
+        cell_text(bs_get_contrast(theme, "primary"))
       ),
       rows = 1,
       fn = \(x) !is.na(x)
     ) |>
     tab_style_body(
       list(
-        cell_fill(bs_get_variables(bs_theme(), "secondary")),
-        cell_text(bs_get_contrast(bs_theme(), "secondary"))
+        cell_fill(bs_get_variables(theme, "secondary")),
+        cell_text(bs_get_contrast(theme, "secondary"))
       ),
       rows = causale != "Pianificato",
       fn = \(x) !is.na(x)

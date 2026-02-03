@@ -41,7 +41,8 @@ server <- function(input, output, session) {
             banca_ore(input$dipendente),
             scale_cut = scales::cut_time_scale()
         )
-    })
+    }) |>
+        bindEvent(input$dipendente, ignoreInit = TRUE)
 
     turniPanelServer(
         "turni_panel",

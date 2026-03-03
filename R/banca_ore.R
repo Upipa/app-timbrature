@@ -58,6 +58,7 @@ banca_ore <- function(
   permessi <- permessi_tbl |>
     filter(year(end_date_time) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>
+    split_permessi() |>
     left_join_check(
       causali_tbl,
       join_by(time_off_reason_id == id),
@@ -66,10 +67,13 @@ banca_ore <- function(
     filter(is_active, riduce_pianificazione) |>
     select(-display_name) |>
     daily_summarise(
-      start_date_time,
+      giorno,
       permessi,
-      as.duration(end_date_time - start_date_time)
-    )
+      int_length(intervalli_temporali)
+    ) |>
+    filter(permessi > 0)
+
+  permessi
 
   trasferte <- trasferte_tbl |>
     filter(year(data) >= anno_inizio_banca_ore) |>

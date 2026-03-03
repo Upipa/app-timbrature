@@ -18,15 +18,15 @@ pianificazione <- function(
   causali_tbl
 ) {
   mese_numerico <- which(mese_choices == .mese)
-  giorni_nel_mese <- 1:days_in_month(ymd(str_glue("{.anno} {.mese} 1")))
+  giorni_nel_mese <- 1:days_in_month(ymd(str_glue("{.anno} {mese_numerico} 1")))
 
-  month_interval_start <- ymd(str_glue("{.anno} {.mese} 1"))
+  month_interval_start <- ymd(str_glue("{.anno} {mese_numerico} 1"))
   month_interval_end <- month_interval_start + months(1) - seconds(1)
 
   month_interval <- month_interval_start %--% month_interval_end
 
   giorni <- tibble(
-    giorno = ymd(str_glue("{.anno} {.mese} {giorni_nel_mese}"))
+    giorno = ymd(str_glue("{.anno} {mese_numerico} {giorni_nel_mese}"))
   ) |>
     mutate(
       intervalli_temporali = int_diff(force_tz(
@@ -57,27 +57,18 @@ pianificazione <- function(
 
   permessi <- permessi_tbl |>
     filter_user(.display_name) |>
-    left_join(causali_tbl, join_by(time_off_reason_id == id)) |>
     mutate(
       across(start_date_time:end_date_time, ~ with_tz(., "Europe/Rome")),
       intervallo_permesso = start_date_time %--% end_date_time
     ) |>
-    filter(int_overlaps(intervallo_permesso, month_interval))
+    filter(int_overlaps(intervallo_permesso, month_interval)) |>
+    split_permessi() |>
+    left_join(causali_tbl, join_by(time_off_reason_id == id))
 
   if (nrow(permessi) > 0) {
     permessi <- permessi |>
       rename(causale = display_name) |>
-      mutate(
-        intervallo_spezzato = map(intervallo_permesso, \(int) {
-          giorni |>
-            mutate(
-              intervalli_temporali = intersect(intervalli_temporali, int)
-            ) |>
-            drop_na()
-        })
-      ) |>
-      select(causale, intervallo_spezzato) |>
-      unnest(intervallo_spezzato) |>
+      select(causale, intervalli_temporali) |>
       mutate(
         durata = int_length(intervalli_temporali)
       ) |>
@@ -85,6 +76,7 @@ pianificazione <- function(
       mutate(
         durata = durata / 3600
       ) |>
+      mutate(giorno = date(int_start(intervalli_temporali))) |>
       pivot_wider(id_cols = giorno, names_from = causale, values_from = durata)
   } else {
     permessi <- tibble(giorno = ymd())

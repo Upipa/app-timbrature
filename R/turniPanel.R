@@ -120,7 +120,7 @@ turniPanelServer <- function(
 
           req(timecard_id)
 
-          pause_poll |>
+          pause_poll() |>
             filter(id == timecard_id) |>
             mutate(
               `Inizio pausa` = as_hms(breaks_start_date_time) |>

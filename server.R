@@ -56,36 +56,21 @@ server <- function(input, output, session) {
         }
     )
 
-    trasferte_poll <- reactivePoll(
+    trasferte_poll <- poll(
+        pool,
+        "trasferte",
         refresh_time,
         session,
-        checkFunc = function() {
-            tbl(pool, "trasferte") |>
-                summarise(
-                    id = max(id)
-                ) |>
-                collect()
-        },
-        valueFunc = function() {
-            tbl(pool, "trasferte") |>
-                collect()
-        }
+        check_col = id,
+        check_fn = sum
     )
-
-    percorsi_poll <- reactivePoll(
+    percorsi_poll <- poll(
+        pool,
+        "percorsi",
         refresh_time,
         session,
-        checkFunc = function() {
-            tbl(pool, "percorsi") |>
-                summarise(
-                    id = max(id)
-                ) |>
-                collect()
-        },
-        valueFunc = function() {
-            tbl(pool, "percorsi") |>
-                collect()
-        }
+        check_col = id,
+        check_fn = sum
     )
 
     output$banca_ore <- renderText({

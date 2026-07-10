@@ -88,7 +88,6 @@ resource <- c(
 )
 
 refresh_time <- 56000
-anno_inizio_banca_ore <- 2026
 
 
 onStop(function() {

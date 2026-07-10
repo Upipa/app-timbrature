@@ -66,9 +66,16 @@ testthat::test_dir("tests/testthat/")
 
 **Ricorda**: valutare sempre se aggiungere o modificare test man mano che si sviluppa l'app. Ogni nuova funzione o modifica alla logica di `banca_ore()` dovrebbe riflettersi nei test.
 
+## CI/CD — memo per produzione
+
+Il progetto è su GitHub. Al momento l'app non è in produzione e lo sviluppo avviene direttamente su main. Quando entrerà in produzione:
+
+- Lavorare **solo su branch** (mai push diretti su main)
+- Configurare **GitHub Actions** per eseguire `testthat::test_dir("tests/testthat/")` ad ogni PR/push su main
+- I test devono passare prima che il merge sia consentito
+
 ## Note sviluppo
 
 - `anno_inizio_banca_ore <- 2026` è definita solo dentro `banca_ore()`. La definizione in `global.R` era dead code ed è stata rimossa.
-- Riga 76 di `banca_ore.R` (`permessi` da sola) è dead code — da rimuovere.
 - Shiny carica automaticamente tutte le funzioni in `R/` tramite `runApp()` — non servono `source()` espliciti in `global.R`.
-- `deploy.R` è obsoleto e può essere cancellato.
+- `deploy.R` è stato rimosso (era obsoleto).

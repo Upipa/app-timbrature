@@ -73,8 +73,6 @@ banca_ore <- function(
     ) |>
     filter(permessi > 0)
 
-  permessi
-
   trasferte <- trasferte_tbl |>
     filter(year(data) >= anno_inizio_banca_ore) |>
     filter_user(.display_name) |>

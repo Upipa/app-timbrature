@@ -155,13 +155,25 @@ trasfertePanelServer <- function(
           note = input$note_trasferta
         )
 
-      dbAppendTable(pool, "trasferte", trasferta_da_aggiungere)
-      info(log, "Nuova trasferta inserita")
-
-      # aggiornamento immediato: incremento trigger
-      trasferte_trigger(trasferte_trigger() + 1)
-
-      removeModal()
+      tryCatch(
+        {
+          dbAppendTable(pool, "trasferte", trasferta_da_aggiungere)
+          info(log, "Nuova trasferta inserita")
+          trasferte_trigger(trasferte_trigger() + 1)
+          removeModal()
+        },
+        error = function(e) {
+          error(
+            log,
+            str_glue("Errore inserimento trasferta: {conditionMessage(e)}")
+          )
+          showNotification(
+            "Errore durante l'inserimento della trasferta. Riprova.",
+            type = "error",
+            duration = NULL
+          )
+        }
+      )
     }) |>
       bindEvent(input$aggiungi_trasferta)
 

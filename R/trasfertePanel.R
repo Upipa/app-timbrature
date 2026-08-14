@@ -197,7 +197,8 @@ trasfertePanelServer <- function(
 
       vec_fmt_currency(
         distanza * 0.5 * as.numeric(input$moltiplicatore_km),
-        locale = "it"
+        locale = "it",
+        output = "plain"
       )
     })
 
